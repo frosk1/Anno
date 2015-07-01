@@ -1,6 +1,12 @@
 import java.io.File;
 import controlP5.*;
 import java.util.regex.*;
+import java.util.regex.MatchResult;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 PrintWriter output;
 String dir ;
@@ -37,6 +43,7 @@ IntList reihenfolge_alt = new IntList();
 // neue Variablen
 StringDict korpus = new StringDict();
 File korpusdatei;
+File ergebnissdatei;
 int start_text = 0;
 int end_text = 0;
 ControlP5 cp5;
@@ -45,7 +52,18 @@ boolean regular = false;
 boolean counts = false;
 IntList reihenfolge = new IntList();
 StringDict texto = new StringDict();
+IntList annoergebniss = new IntList();
+IntList annoergebnisse2 = new IntList();
 
+//kappa variablen
+double gemeinsamrelevant = 0;
+double a1_1 = 0;
+double a1_0 = 0;
+double a2_1 = 0;
+double a2_0 = 0;
+double pa;
+double pe;
+double kappa;
 void setup() {
   size(1900,800);
   PFont font = createFont("arial",20);
@@ -76,10 +94,16 @@ void draw() {
     background(0);
     //println(rating);
     fill(255);
-    text("ENDE",500,500);
+    text("Annotatins-Ende",500,500);
     rating.sortValuesReverse();
     text("Drücken sie f um die Annotations zu beenden und die Ergebnisse zu speichern",700,500);
     status = "speichern";
+  }
+  if (status =="EndeAnno"){
+    background(255);
+    fill(0);
+    text("Um den Cohens-Kappa Wert mit anderen Ergebnissen zu überprüfen bitte o drücken"
+    +"\n"+" und die entsprechende Ergebnissdatei einlesen",500,500);
   }
 } 
 
@@ -169,8 +193,9 @@ void keyPressed() {
     count = count +1;
     //println("ccc",count);
     rating.add(texto.get(str(reihenfolge.get(t1))),1);
-    anno.append(texto.get(str(reihenfolge.get(t1)))+" #");
+    anno.append(texto.get(str(reihenfolge.get(t1)))); // a drücken =  1. Text wird ausgewählt
     anno.append(texto.get(str(reihenfolge.get(t2))));
+    annoergebniss.append(0);
     if(count==(reihenfolge.size()/2)){
       status = "Ende";
     }
@@ -187,7 +212,8 @@ void keyPressed() {
     //println("ccc",count);
     rating.add(texto.get(str(reihenfolge.get(t2))),1);
     anno.append(texto.get(str(reihenfolge.get(t1))));
-    anno.append(texto.get(str(reihenfolge.get(t2)))+" #");
+    anno.append(texto.get(str(reihenfolge.get(t2)))); // b drücken =  2. Text wird ausgwählt
+    annoergebniss.append(1);
     if(count==(reihenfolge.size()/2)){
       status = "Ende";
       
@@ -202,23 +228,83 @@ void keyPressed() {
     output.println("Annotations-Ergebnisse");
     output.println(" ");
     for(int i =start_text;i<=end_text;i++){
-      output.println("Text "+i+" :"+rating.get(texto.get(str(i))));
+      output.println("Text "+i+": "+rating.get(texto.get(str(i))));
     }
     output.println(" ");
     output.println("Textpaare");
     output.println(" ");
-    int paar = 0;
-    for(int i=0;i<anno.size();i++){
-      paar = paar +1;
-      output.print(anno.get(i)+",");
-      if(paar % 2 == 0){
-        output.println(" ");
-      }  
+    int annotation = 0;
+    for(int i=0;i<anno.size();i= i+2){
+      
+      output.print(anno.get(i)+", "+anno.get(i+1)+"\t"+"\t"+annoergebniss.get(annotation));
+      output.println(" ");
+      annotation = annotation +1;
   }
-    //println(anno);
+    println(anno.size());
+    println(annoergebniss);
     output.close();
-    exit();
+    status = "EndeAnno";
   
+  }
+  if ((key == 'o') && (status == "EndeAnno")){
+    selectInput("Ergebnissdatei auswählen :", "fileSelected2");
+    status = "Kappa";
+    
+  }
+    if ((key == 'k') && (status == "Kappa")){
+      if(annoergebniss.size()!=annoergebnisse2.size()){
+        text("Bitte mit o andere Datei einlesen, die annotationen haben nicht die selbe Länge",100,100);
+        status = "EndeAnno";
+      }
+      else{
+        for(int i =0;i<annoergebniss.size();i++){
+          if(annoergebniss.get(i)==annoergebnisse2.get(i)){
+            gemeinsamrelevant = gemeinsamrelevant +1;
+          }
+          if(annoergebniss.get(i)== 1){
+            a1_1 = a1_1 +1;
+          }
+          if(annoergebniss.get(i)== 0){
+            a1_0 = a1_0 +1;
+          }
+          if(annoergebnisse2.get(i)== 0){
+            a2_0 = a2_0 +1;
+          }
+          if(annoergebnisse2.get(i)== 1){
+            a2_1 = a2_1 +1;
+          }
+        }
+        pa = gemeinsamrelevant/annoergebniss.size();
+        pe = ((a1_1/annoergebniss.size())*(a2_1/annoergebniss.size()))
+            +((a1_0/annoergebniss.size())*(a2_0/annoergebniss.size()));
+        kappa = (pa-pe)/(1-pe);
+        text("Der Kappa-Wert beträgt: "+kappa,600,600);
+        if(kappa<=0.80){
+            text("Kappa wert zu niedrig bitt erneut annotieren",650,650);
+            text("Dafür Space drücken",670,670);
+            status= "anleitung";
+        }
+      }
+    }  
+}
+void fileSelected2(File selection) {
+  if (selection == null) {
+    text("Sie haben keine Ergebnissdatei ausgewählt, bitte wählen sie eine Ergebniss.txt-Datei aus",800,800);
+    selectInput("Korpusdatei auswählen :", "fileSelected");
+  } else {
+    dir = selection.getAbsolutePath();
+    ergebnissdatei = new File(dir);
+    String[] myErgebnissText = loadStrings (ergebnissdatei);
+    for (int u=0; u < myErgebnissText.length; u++) {
+      println(myErgebnissText[u]);
+      Matcher matcher = Pattern.compile("Text \\d, Text \\d\\t\\t(\\d)").matcher(myErgebnissText[u]);
+      if(matcher.find()){
+      //println("matcher group ### "+matcher.group(1));
+      annoergebnisse2.append(int(matcher.group(1)));
+      }
+    }
+    text("Ergebnissdatei eingelesen, bitte k drücken um cohens Kappa wert auszurechnen",200,200);
+    //println(annoergebnisse2);
   }
 }
 void fileSelected(File selection) {
@@ -311,4 +397,4 @@ public void input(String theText) {
 //    }    
 //    println("\t "+ "regulaer :" +regular + " bestimme Zahl :" + counts);
 //  }
-//}
+//}oo
