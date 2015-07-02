@@ -27,7 +27,7 @@ String textstring = "";
 int textanzahl;
 int t1 = 0;
 int t2 = 1;
-int t3 = 2;
+
 int size = 0;
 int size2 = 0;
 int wiederholungen = 0;
@@ -56,14 +56,14 @@ IntList annoergebniss = new IntList();
 IntList annoergebnisse2 = new IntList();
 
 //kappa variablen
-double gemeinsamrelevant = 0;
-double a1_1 = 0;
-double a1_0 = 0;
-double a2_1 = 0;
-double a2_0 = 0;
-double pa;
-double pe;
-double kappa;
+int gemeinsamrelevant = 0;
+int a1_1 = 0;
+int a1_0 = 0;
+int a2_1 = 0;
+int a2_0 = 0;
+float pa;
+float pe;
+float kappa;
 void setup() {
   size(1900,800);
   PFont font = createFont("arial",20);
@@ -82,7 +82,7 @@ void draw() {
   if (status == "Annotation"){
     cp5.hide();
     background(255);
-
+   
     text("TextA",300,150);
     text(korpus.get(str(reihenfolge.get(t1))),20,200);
     text("TextB",1200,150);
@@ -103,7 +103,9 @@ void draw() {
     background(255);
     fill(0);
     text("Um den Cohens-Kappa Wert mit anderen Ergebnissen zu überprüfen bitte o drücken"
-    +"\n"+" und die entsprechende Ergebnissdatei einlesen",500,500);
+    +"\n"+" und die entsprechende Ergebnissdatei einlesen"
+    +"\n"+"Um die Annoatation zu beenden drücken Sie e."
+    +"\n"+"Die Ergebnissdatei finden Sie im entpsrechenden Ordner",500,500);
   }
 } 
 
@@ -114,6 +116,7 @@ void keyPressed() {
     status = "anleitung";    
   }
   if ((key == ' ') && (status == "anleitung")){
+    cp5.show();
         // nächster Frame kommt :
     background(255);
     fill(0);
@@ -125,7 +128,7 @@ void keyPressed() {
    text("Bitte geben Sie den Bereich der Texte für die Annotation an und"
    +"\n"+"bestätigen Sie mit ENTER."
    +"\n"+"Beispiel: 1-10 oder 3-5",200,350);
-   text("Anzahl der Texte im Korpus: "+korpus.size(),200,450);
+   text("Anzahl der Texte im Korpus: "+(korpus.size()-1),200,450);
       cp5.addTextfield("input")
      .setPosition(200,500)
      .setSize(200,40)
@@ -157,6 +160,19 @@ void keyPressed() {
   
   // reihenfolge der Textpaare wird festgelegt
   if ((key == 'l') && (status == "anleitungfertig")){
+    gemeinsamrelevant = 0;
+    a1_0 = 0;
+    a1_1 = 0;
+    a2_0 = 0;
+    a2_1 = 0;
+    reihenfolge.clear();
+    anno.clear();
+    rating.clear();
+    annoergebniss.clear();
+    annoergebnisse2.clear();
+    t1=0;
+    t2=1;
+    count = 0;
     if(start_text == 0 && end_text ==0){
       text("Bitte geben Sie zuerst einen korrekten Bereich im Zahlenfeld an"+
       "\n"+"bevor Sie die Annotation starten",200,570);
@@ -172,17 +188,21 @@ void keyPressed() {
           reihenfolge.append(wert2);
         }
       }
-      //for(int i=0;i<reihenfolge.size();i++){
-        //println("i."+reihenfolge.get(i));
-      //}
+      for(int i=0;i<reihenfolge.size();i++){
+        println("i."+reihenfolge.get(i));
+      }
    // textnamen werden festgelegt
      for(int i = start_text; i<= end_text; i++){
        texto.set(str(i),"Text "+str(i)); 
      }
+     println(texto);
   // rating dic wird initialisiert
      for(int i = start_text; i<=end_text;i++){
        rating.set(texto.get(str(i)),0);
      }
+     println(rating);
+     println(korpus);
+     println(korpus.get(str(reihenfolge.get(3))));
       status = "Annotation";
     }
   }
@@ -202,6 +222,7 @@ void keyPressed() {
     else{
     t1 = t1 +2;
     t2 = t2 +2;
+    println("t1 "+t1,"t2 "+t2);
     status = "Annotation";
     }
   }
@@ -221,6 +242,7 @@ void keyPressed() {
     else{
     t1 = t1 +2;
     t2 = t2 +2; 
+    println("t1 "+t1,"t2 "+t2);
     status = "Annotation";
     }
   }
@@ -246,17 +268,24 @@ void keyPressed() {
     status = "EndeAnno";
   
   }
+    if ((key == 'e') && (status == "EndeAnno")){
+    exit();
+    
+  }
   if ((key == 'o') && (status == "EndeAnno")){
     selectInput("Ergebnissdatei auswählen :", "fileSelected2");
     status = "Kappa";
     
   }
     if ((key == 'k') && (status == "Kappa")){
+      
       if(annoergebniss.size()!=annoergebnisse2.size()){
         text("Bitte mit o andere Datei einlesen, die annotationen haben nicht die selbe Länge",100,100);
         status = "EndeAnno";
       }
       else{
+        println(annoergebniss);
+        println(annoergebnisse2);
         for(int i =0;i<annoergebniss.size();i++){
           if(annoergebniss.get(i)==annoergebnisse2.get(i)){
             gemeinsamrelevant = gemeinsamrelevant +1;
@@ -274,10 +303,18 @@ void keyPressed() {
             a2_1 = a2_1 +1;
           }
         }
-        pa = gemeinsamrelevant/annoergebniss.size();
-        pe = ((a1_1/annoergebniss.size())*(a2_1/annoergebniss.size()))
-            +((a1_0/annoergebniss.size())*(a2_0/annoergebniss.size()));
+        println("gemeinsam ", gemeinsamrelevant);
+        println("a1_1 ", a1_1);
+        println("a1_0 ", a1_0);
+        println("a2_1 ", a2_1);
+        println("a2_0 ", a2_0);
+        pa = float(gemeinsamrelevant)/float(annoergebniss.size());
+        println("pa "+pa);
+        pe = ((float(a1_1)/float(annoergebniss.size()))*(float(a2_1)/float(annoergebniss.size())))
+            +((float(a1_0)/float(annoergebniss.size()))*(float(a2_0)/float(annoergebniss.size())));
+            println("pe "+pe);
         kappa = (pa-pe)/(1-pe);
+        println("kappa "+kappa);
         text("Der Kappa-Wert beträgt: "+kappa,600,600);
         if(kappa<=0.80){
             text("Kappa wert zu niedrig bitt erneut annotieren",650,650);
@@ -292,6 +329,7 @@ void fileSelected2(File selection) {
     text("Sie haben keine Ergebnissdatei ausgewählt, bitte wählen sie eine Ergebniss.txt-Datei aus",800,800);
     selectInput("Korpusdatei auswählen :", "fileSelected");
   } else {
+    
     dir = selection.getAbsolutePath();
     ergebnissdatei = new File(dir);
     String[] myErgebnissText = loadStrings (ergebnissdatei);
@@ -334,7 +372,8 @@ void fileSelected(File selection) {
       else{
         text+= myText[u]+"\n";
       }
-      
+      korpus.set(zahl,text); // ein letzes mal hinzufügen, für den letzen Text im Korpus,
+                             // dieser wird nicht in der for schleife gefüllt
 //      String[] splitResult = myText[u].split("\t");
 //      korpus.set(splitResult[0],splitResult[1]);
 //      println(splitResult[0]);
