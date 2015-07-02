@@ -54,6 +54,8 @@ IntList reihenfolge = new IntList();
 StringDict texto = new StringDict();
 IntList annoergebniss = new IntList();
 IntList annoergebnisse2 = new IntList();
+IntList anno2texte = new IntList();
+
 
 //kappa variablen
 int gemeinsamrelevant = 0;
@@ -107,6 +109,7 @@ void draw() {
     +"\n"+"Um die Annoatation zu beenden drücken Sie e."
     +"\n"+"Die Ergebnissdatei finden Sie im entpsrechenden Ordner",500,500);
   }
+
 } 
 
 void keyPressed() {
@@ -160,6 +163,8 @@ void keyPressed() {
   
   // reihenfolge der Textpaare wird festgelegt
   if ((key == 'l') && (status == "anleitungfertig")){
+    // werte werden neu initialisiert für jeden Durchgang,
+    // damit die benötigetn variablen wieder auf 0 gesetzt werden.
     gemeinsamrelevant = 0;
     a1_0 = 0;
     a1_1 = 0;
@@ -278,10 +283,17 @@ void keyPressed() {
     
   }
     if ((key == 'k') && (status == "Kappa")){
-      
-      if(annoergebniss.size()!=annoergebnisse2.size()){
-        text("Bitte mit o andere Datei einlesen, die annotationen haben nicht die selbe Länge",100,100);
-        status = "EndeAnno";
+      boolean gleicheTexte = true;
+      for(int i =start_text; i<=end_text;i++){
+        if(anno2texte.get(i)!= i){
+          gleicheTexte = false;
+          break;
+        }
+      }
+      if((annoergebniss.size()!=annoergebnisse2.size()|gleicheTexte == false)){
+        text("Die Ergebnissdatei enthällt falsche Annotationen",500,30);
+        selectInput("Ergebnissdatei auswählen :", "fileSelected2");
+        //status = "EndeAnno";
       }
       else{
         println(annoergebniss);
@@ -339,6 +351,11 @@ void fileSelected2(File selection) {
       if(matcher.find()){
       //println("matcher group ### "+matcher.group(1));
       annoergebnisse2.append(int(matcher.group(1)));
+      }
+      Matcher matcher2 = Pattern.compile("Text (\\d+): \\d+").matcher(myErgebnissText[u]);
+      if(matcher2.find()){
+      println("matcher group ### "+matcher2.group(1));
+      anno2texte.append(int(matcher2.group(1)));
       }
     }
     text("Ergebnissdatei eingelesen, bitte k drücken um cohens Kappa wert auszurechnen",200,200);
