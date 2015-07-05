@@ -87,8 +87,8 @@ void draw() {
    
     text("TextA",300,150);
     text(korpus.get(str(reihenfolge.get(t1))),20,200);
-    text("TextB",1200,150);
-    text(korpus.get(str(reihenfolge.get(t2))),880,200);
+    text("TextB",800,150);
+    text(korpus.get(str(reihenfolge.get(t2))),670,200);
     text("Drücken sie 'a' für TextA oder 'b' für TextB",600,700);
     status = "gedrückt";
   } 
@@ -376,24 +376,25 @@ void fileSelected(File selection) {
 
     // korpus datei wird eingelesen und in ein String Dic geschrieben
     // "ID" : "Text"
-   String regex = "\\d+";
-   String zahl = "";
+    // Der Text wird noch mit Zeilenumbrüchen versehen,
+    // damit er besser dargestellt wird.
+   String regex2 = "\\t\\t";
    String text = "";
-    String[] myText = loadStrings (korpusdatei);
+   String[] myText = loadStrings (korpusdatei);
     for (int u=0; u < myText.length; u++) {
-      if(myText[u].matches(regex)){
-        korpus.set(zahl,text);
-        zahl = myText[u];
-        text ="";
+      String [] splitresult = myText[u].split(regex2);
+      int textid = int(splitresult[0]);
+      String [] wordlist = splitresult[1].split(" ");
+      for(int k=0;k<wordlist.length;k++){
+        text += wordlist[k]+" ";
+        if(k!=0&&k%13==0){
+          text += "\n";
+        }
       }
-      else{
-        text+= myText[u]+"\n";
-      }
-      korpus.set(zahl,text); // ein letzes mal hinzufügen, für den letzen Text im Korpus,
-                             // dieser wird nicht in der for schleife gefüllt
-//      String[] splitResult = myText[u].split("\t");
-//      korpus.set(splitResult[0],splitResult[1]);
-//      println(splitResult[0]);
+      korpus.set(str(textid),text);
+      text = "";
+  //  println(korpus);
+
     }
     //println(korpus.get("0"));
     //println(korpus.get("1"));
