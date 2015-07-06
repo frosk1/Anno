@@ -67,7 +67,7 @@ float pa;
 float pe;
 float kappa;
 void setup() {
-  size(1900,800);
+  size(1300,800);
   PFont font = createFont("arial",20);
   cp5 = new ControlP5(this);
   output = createWriter("Ergebnisse.txt");
@@ -284,11 +284,18 @@ void keyPressed() {
   }
     if ((key == 'k') && (status == "Kappa")){
       boolean gleicheTexte = true;
+      int laufvar = 0;
+      println("anno2texte"+anno2texte);
+      println(annoergebniss);
+      println(annoergebnisse2);
       for(int i =start_text; i<=end_text;i++){
-        if(anno2texte.get(i)!= i){
+        println("laufvar"+laufvar);
+        if(anno2texte.get(laufvar)!= i){
+          println("######ungleich####");
           gleicheTexte = false;
           break;
         }
+        laufvar = laufvar +1 ;
       }
       if((annoergebniss.size()!=annoergebnisse2.size()|gleicheTexte == false)){
         text("Die Ergebnissdatei enthällt falsche Annotationen",500,30);
@@ -346,10 +353,10 @@ void fileSelected2(File selection) {
     ergebnissdatei = new File(dir);
     String[] myErgebnissText = loadStrings (ergebnissdatei);
     for (int u=0; u < myErgebnissText.length; u++) {
-      println(myErgebnissText[u]);
-      Matcher matcher = Pattern.compile("Text \\d, Text \\d\\t\\t(\\d)").matcher(myErgebnissText[u]);
+      println("myergebnisse"+myErgebnissText[u]);
+      Matcher matcher = Pattern.compile("Text \\d+, Text \\d+\\t\\t(\\d)").matcher(myErgebnissText[u]);
       if(matcher.find()){
-      //println("matcher group ### "+matcher.group(1));
+      println("matcher group ### "+matcher.group(1));
       annoergebnisse2.append(int(matcher.group(1)));
       }
       Matcher matcher2 = Pattern.compile("Text (\\d+): \\d+").matcher(myErgebnissText[u]);
@@ -387,7 +394,7 @@ void fileSelected(File selection) {
       String [] wordlist = splitresult[1].split(" ");
       for(int k=0;k<wordlist.length;k++){
         text += wordlist[k]+" ";
-        if(k!=0&&k%13==0){
+        if(k!=0&&k%10==0){
           text += "\n";
         }
       }
