@@ -72,11 +72,15 @@ void setup() {
   cp5 = new ControlP5(this);
   output = createWriter("Ergebnisse.txt");
     background(0);
-    text("Anno 2.0",500,100);
-    text("Korpus-Annotations-Tool",500,150);
-    text("Drücken sie o und wählen sie die Korpus.txt Datei aus."
-    +"\n"+"Die Korpsudatei muss alle Texte entahlten, die zu annotieren sind"
-    +"\n"+"Sie werden danach die Anleitung zur Annotation sehen.",500,200);
+    rect(400,20,500,20);
+    rect(400,200,500,20);
+    textSize(27);
+    text("Anno 2.0",590,100);
+    text("Korpus-Annotations-Tool",490,150);
+    textSize(15);
+    text("Drücken sie 'o' und wählen sie die Korpus.txt Datei aus."
+    +"\n"+"Die Korpsudatei muss alle Texte enthalten, die zu annotieren sind."
+    +"\n"+"Sie werden danach die Anleitung zur Annotation sehen.",450,400);
   
 }
  
@@ -86,28 +90,30 @@ void draw() {
     cp5.hide();
     background(255);
    
-    text("TextA",300,150);
-    text(korpus.get(str(reihenfolge.get(t1))),20,200);
-    text("TextB",800,150);
-    text(korpus.get(str(reihenfolge.get(t2))),670,200);
-    text("Drücken sie 'a' für TextA oder 'b' für TextB",600,700);
+    text("TextA",230,150);
+    text(korpus.get(str(reihenfolge.get(t1))),60,200);
+    text("TextB",950,150);
+    text(korpus.get(str(reihenfolge.get(t2))),770,200);
+    text("Drücken sie 'a' für TextA oder 'b' für TextB",500,70);
     status = "gedrückt";
   } 
   if (status == "Ende"){
     background(0);
     //println(rating);
     fill(255);
-    text("Annotatins-Ende",500,500);
+    textSize(15);
+    text("Annotatins-Ende",570,300);
     rating.sortValuesReverse();
-    text("Drücken sie f um die Annotations zu beenden und die Ergebnisse zu speichern",700,500);
+    textSize(13);
+    text("Drücken sie ' f ' um die Annotations zu beenden und die Ergebnisse zu speichern.",430,400);
     status = "speichern";
   }
   if (status =="EndeAnno"){
     background(255);
     fill(0);
-    text("Um den Cohens-Kappa Wert mit anderen Ergebnissen zu überprüfen bitte o drücken"
+    text("Um den Cohens-Kappa Wert mit anderen Ergebnissen zu überprüfen bitte 'o' drücken"
     +"\n"+" und die entsprechende Ergebnissdatei einlesen"
-    +"\n"+"Um die Annoatation zu beenden drücken Sie e."
+    +"\n"+"\n"+"Um die Annoatation zu beenden drücken Sie 'e'."
     +"\n"+"Die Ergebnissdatei finden Sie im entpsrechenden Ordner",500,500);
   }
 
@@ -123,11 +129,17 @@ void keyPressed() {
     cp5.show();
         // nächster Frame kommt :
     background(255);
+    
     fill(0);
-    text("Annotation zur Textqualität",600,100);
-    text("Sie werden immer Textpaare zu sehen bekommen. Einen Text A und einen Text B."
-    +"\n"+"Ihre Aufgabe ist es zu entscheiden, welchen Text Sie für qualitativ hochwertiger halten."
-    +"\n"+"Um Ihre Entscheidung zu bestätigen, drücken Sie die Taste 'a' für den Text A und 'b' für den Text B.",10,200);
+    textSize(17);
+    text("Annotation zur Textqualität",515,50);
+    textSize(12);
+    text("Anleitung",200,140);
+    text("Richtlinien zur Annotation",900,140);
+    text("Sie werden immer Textpaare zu sehen bekommen. Einen Text A und"
+    +"\n"+"einen Text B. Ihre Aufgabe ist es zu entscheiden, welchen Text Sie für"
+    +"\n"+"qualitativ hochwertiger halten. Um Ihre Entscheidung zu bestätigen,"
+    +"\n"+"drücken Sie die Taste 'a' für den Text A und 'b' für den Text B.",60,200);
     text("Lesen Sie sich die beiden Texte in Ruhe durch und entscheiden Sie erst dann. Zur leichteren"
     +"\n"+ "Entscheidungsfindung, sollten sie auf Merkmale wie Lesbarkeit und Verständlichkeit achten.",700,200);
 
@@ -146,17 +158,20 @@ void keyPressed() {
    +"\n"+"\n"+"'Wer das behauptet, lügt. vs Er lügt.'"
    +"\n"+"1. Satz komplexer Aufbau, 2. Satz einfacher Aufbau. Der Einfache Aufbau führt zu mehr Lesbarkeit"
    +"\n"+"und zu mehr Verständniss.",700,250);
-  line(700,295,1280,295);
-  line(700,350,1280,350);
-  line(700,395,1280,395);
-  line(700,480,1280,480); 
-   
-   text("Bitte geben Sie den Bereich der Texte für die Annotation an und"
-   +"\n"+"bestätigen Sie mit ENTER."
-   +"\n"+"Beispiel: 1-10 oder 3-5",200,350);
-   text("Anzahl der Texte im Korpus: "+(korpus.size()-1),200,450);
+  line(700,325,1280,325);
+  line(700,400,1280,400);
+  line(700,455,1280,455);
+  line(700,570,1280,570); 
+  line(700,650,1280,650);
+  line(60,300,500,300); 
+  text("Auswahl des Textbereichs",200,335);
+  text("Anzahl der Texte im Korpus: "+(korpus.size()-1),60,380); 
+  text("Bitte geben Sie den Bereich der Texte für die Annotation an"
+   +"\n"+"und bestätigen Sie mit ENTER."
+   +"\n"+"Beispiel: 1-10 oder 3-5",60,420);
+ 
       cp5.addTextfield("input")
-     .setPosition(200,500)
+     .setPosition(60,470)
      .setSize(200,40)
      .setFocus(true)
      .setColor(color(255,0,0))
@@ -178,7 +193,7 @@ void keyPressed() {
 //    case('2'): r.activate(1); break;
 //    }
    status = "anleitungfertig";
-  text("Drücken Sie 'l' zum Starten der Annotation",900,500); 
+  text("Drücken Sie 'l' zum Starten der Annotation",60,700); 
   }
   
   
@@ -429,8 +444,8 @@ void fileSelected(File selection) {
     //println(korpus.get("0"));
     //println(korpus.get("1"));
     //println(korpus.size());
-    text("Korpusdatei erfolgreich eingelesen",600,600);
-    text("drücken Sie SPACE um zur Anleitung zu gelangen",600,610);
+    text("Korpusdatei erfolgreich eingelesen",550,600);
+    text("drücken Sie 'SPACE' um zur Anleitung zu gelangen",500,620);
     //println(korpus.get("0"));
   }
 }
@@ -447,9 +462,9 @@ public void input(String theText) {
   //println("start: "+ start_text);
   //println("end: "+ end_text);
   fill(255);
-  rect(200,670,200,70);
+  rect(60,590,280,70);
   fill(0);
-  text("Sie Annotieren die Texte: "+start_text+" - "+end_text,210,710);
+  text("Sie Annotieren die Texte: "+start_text+" - "+end_text,65,610);
   int anzahltextanno = 0;
   for(int i = start_text; i <= end_text;i++){
     anzahltextanno = anzahltextanno + 1;
@@ -461,7 +476,7 @@ public void input(String theText) {
     anzahlpaare = anzahlpaare +1;
     anzahlpaare2 = anzahlpaare2+anzahlpaare;
   }
-  text("Anzahl der Textpaare: "+anzahlpaare2,210,730);
+  text("Anzahl der Textpaare: "+anzahlpaare2,65,640);
 }
 //void controlEvent(ControlEvent theEvent) {
 //  if(theEvent.isFrom(r)) {
