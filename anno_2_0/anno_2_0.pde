@@ -71,6 +71,7 @@ void setup() {
   PFont font = createFont("arial",20);
   cp5 = new ControlP5(this);
   output = createWriter("Ergebnisse.txt");
+    background(0);
     text("Anno 2.0",500,100);
     text("Korpus-Annotations-Tool",500,150);
     text("Drücken sie o und wählen sie die Korpus.txt Datei aus."
@@ -123,11 +124,33 @@ void keyPressed() {
         // nächster Frame kommt :
     background(255);
     fill(0);
-    text("Anleitung",600,100);
-    text("Sie werden in dieser Annotation immer genau 2 Textpaare sehen, den Text A und den Text B."
-    +"\n"+"Sie müssen nun auswählen ob sie den Text A oder den Text B für qualitativ besser empfinden."
-    +"\n"+"Lesen Sie sich in Ruhe alle Texte durch und entscheiden sie sich dann für den Text A mit der Taste 'a'"
-   +"\n"+"und für den Text B mit der Taste 'b'" ,200,200);
+    text("Annotation zur Textqualität",600,100);
+    text("Sie werden immer Textpaare zu sehen bekommen. Einen Text A und einen Text B."
+    +"\n"+"Ihre Aufgabe ist es zu entscheiden, welchen Text Sie für qualitativ hochwertiger halten."
+    +"\n"+"Um Ihre Entscheidung zu bestätigen, drücken Sie die Taste 'a' für den Text A und 'b' für den Text B.",10,200);
+    text("Lesen Sie sich die beiden Texte in Ruhe durch und entscheiden Sie erst dann. Zur leichteren"
+    +"\n"+ "Entscheidungsfindung, sollten sie auf Merkmale wie Lesbarkeit und Verständlichkeit achten.",700,200);
+
+    text("Beispielsätze :"+"\n"+"\n"+"'Dieser Tag ist Rudolf.'"
+   +"\n"+"Obwohl dieser Satz grammatikalisch korrekt gebildet wurde, ist seine Verständlichkeit sehr schlecht."
+   +"\n"+"\n"+"'Heute ist Freitag. Darüber freue ich mich.'"
+   +"\n"+"Dieser Satz liefert eine gute Verständlichkeit. Das Pronominaladverb darüber verbindet die beiden" 
+   +"\n"+"Sätze miteinander und trägt positiv zum Verständnis bei."
+   +"\n"+"\n"+"'Ich weiß, dass ich nichts weiß.'"
+   +"\n"+"In diesem Satz spielt ein Konnektor eine positive Rolle, im Bezug auf die Verständlichkeit."
+   +"\n"+"\n"+"'Er hat das im Laufe der Jahre stark heruntergekommene Fahrrad, das er damals zur Kommunion"
+   +"\n"+"geschenkt bekommen hatte, dem Kind gegeben.'"
+   +"\n"+"'Ihr solltet jetzt wegfahren, weil ihr, wenn ihr noch lange wartet, im Stau stehen werdet'"
+   +"\n"+"Die beiden Sätze spiegeln unnötig komplizierte Wort- und Satzstellungen wieder. Erschwert die"
+   +"\n"+"Lesbarkeit und verringert das Verständnis."
+   +"\n"+"\n"+"'Wer das behauptet, lügt. vs Er lügt.'"
+   +"\n"+"1. Satz komplexer Aufbau, 2. Satz einfacher Aufbau. Der Einfache Aufbau führt zu mehr Lesbarkeit"
+   +"\n"+"und zu mehr Verständniss.",700,250);
+  line(700,295,1280,295);
+  line(700,350,1280,350);
+  line(700,395,1280,395);
+  line(700,480,1280,480); 
+   
    text("Bitte geben Sie den Bereich der Texte für die Annotation an und"
    +"\n"+"bestätigen Sie mit ENTER."
    +"\n"+"Beispiel: 1-10 oder 3-5",200,350);
