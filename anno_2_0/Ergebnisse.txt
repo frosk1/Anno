@@ -1,7 +1,7 @@
 Annotations-Ergebnisse
  
-Text 1: 2
-Text 2: 2
+Text 1: 4
+Text 2: 0
 Text 3: 2
 Text 4: 2
 Text 5: 2
@@ -9,12 +9,12 @@ Text 5: 2
 Textpaare
  
 Text 1, Text 2		0 
-Text 1, Text 3		1 
+Text 1, Text 3		0 
 Text 1, Text 4		0 
-Text 1, Text 5		1 
-Text 2, Text 3		0 
+Text 1, Text 5		0 
+Text 2, Text 3		1 
 Text 2, Text 4		1 
-Text 2, Text 5		0 
+Text 2, Text 5		1 
 Text 3, Text 4		1 
 Text 3, Text 5		0 
 Text 4, Text 5		1 

@@ -2,7 +2,7 @@ import java.io.File;
 import controlP5.*;
 import java.util.regex.*;
 import java.util.regex.MatchResult;
-
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,11 +50,13 @@ ControlP5 cp5;
 RadioButton r;
 boolean regular = false;
 boolean counts = false;
-IntList reihenfolge = new IntList();
+//IntList reihenfolge = new IntList();
+ArrayList<Tuple> reihenfolge = new ArrayList<Tuple>();
 StringDict texto = new StringDict();
 IntList annoergebniss = new IntList();
 IntList annoergebnisse2 = new IntList();
 IntList anno2texte = new IntList();
+Tuple tupeltext = new Tuple();
 
 
 //kappa variablen
@@ -91,9 +93,9 @@ void draw() {
     background(255);
    
     text("TextA",230,150);
-    text(korpus.get(str(reihenfolge.get(t1))),60,200);
+    text(korpus.get(str(reihenfolge.get(t1).get0())),60,200);
     text("TextB",950,150);
-    text(korpus.get(str(reihenfolge.get(t2))),770,200);
+    text(korpus.get(str(reihenfolge.get(t1).get1())),770,200);
     text("Drücken sie 'a' für TextA oder 'b' für TextB",500,70);
     status = "gedrückt";
   } 
@@ -227,12 +229,15 @@ void keyPressed() {
         for(int u = i+1; u<= end_text;u++){
           //println(i);
           wert2 = u;
-          reihenfolge.append(wert1);
-          reihenfolge.append(wert2);
+          Tuple tupeltexte = new Tuple(wert1,wert2);
+          reihenfolge.add(tupeltexte);
+          //reihenfolge.append(wert1);
+          //reihenfolge.append(wert2);
         }
       }
       for(int i=0;i<reihenfolge.size();i++){
-        println("i."+reihenfolge.get(i));
+       println("i."+reihenfolge.get(i).get0());
+       println("i."+reihenfolge.get(i).get1());
       }
    // textnamen werden festgelegt
      for(int i = start_text; i<= end_text; i++){
@@ -245,7 +250,7 @@ void keyPressed() {
      }
      println(rating);
      println(korpus);
-     println(korpus.get(str(reihenfolge.get(3))));
+     //println(korpus.get(str(reihenfolge.get(3))));
       status = "Annotation";
     }
   }
@@ -255,17 +260,19 @@ void keyPressed() {
     //println("gedrückt");
     count = count +1;
     //println("ccc",count);
-    rating.add(texto.get(str(reihenfolge.get(t1))),1);
-    anno.append(texto.get(str(reihenfolge.get(t1)))); // a drücken =  1. Text wird ausgewählt
-    anno.append(texto.get(str(reihenfolge.get(t2))));
+    rating.add(texto.get(str(reihenfolge.get(t1).get0())),1);
+    anno.append(texto.get(str(reihenfolge.get(t1).get0()))); // a drücken =  1. Text wird ausgewählt
+    anno.append(texto.get(str(reihenfolge.get(t1).get1())));
     annoergebniss.append(0);
-    if(count==(reihenfolge.size()/2)){
+    //if(count==(reihenfolge.size()/2)){
+    if(count==reihenfolge.size()){
       status = "Ende";
     }
     else{
-    t1 = t1 +2;
-    t2 = t2 +2;
-    println("t1 "+t1,"t2 "+t2);
+      t1 = t1 +1;
+    //t1 = t1 +2;
+    //t2 = t2 +2;
+    println("t1 "+t1);
     status = "Annotation";
     }
   }
@@ -274,18 +281,20 @@ void keyPressed() {
     //println("gedrückt");
     count = count +1;
     //println("ccc",count);
-    rating.add(texto.get(str(reihenfolge.get(t2))),1);
-    anno.append(texto.get(str(reihenfolge.get(t1))));
-    anno.append(texto.get(str(reihenfolge.get(t2)))); // b drücken =  2. Text wird ausgwählt
+    rating.add(texto.get(str(reihenfolge.get(t1).get1())),1);
+    anno.append(texto.get(str(reihenfolge.get(t1).get0())));
+    anno.append(texto.get(str(reihenfolge.get(t1).get1()))); // b drücken =  2. Text wird ausgwählt
     annoergebniss.append(1);
-    if(count==(reihenfolge.size()/2)){
+    //if(count==(reihenfolge.size()/2)){
+    if(count==reihenfolge.size()){  
       status = "Ende";
       
     }
     else{
-    t1 = t1 +2;
-    t2 = t2 +2; 
-    println("t1 "+t1,"t2 "+t2);
+    t1 = t1 +1;
+    //t1 = t1 +2;
+    //t2 = t2 +2; 
+    println("t1 "+t1);
     status = "Annotation";
     }
   }
@@ -477,6 +486,29 @@ public void input(String theText) {
     anzahlpaare2 = anzahlpaare2+anzahlpaare;
   }
   text("Anzahl der Textpaare: "+anzahlpaare2,65,640);
+}
+class Tuple{ 
+  public  int X; 
+  public  int Y; 
+  
+  public Tuple(int x, int y) { 
+    this.X = x; 
+    this.Y = y; 
+  }
+   public Tuple() { 
+  }
+  public void set0(int x){
+    this.X = x;
+  }
+  public void set1(int y){
+    this.Y = y;
+  }
+  public int get0(){
+    return this.X;
+  }
+  public int get1(){
+    return this.Y;
+  }
 }
 //void controlEvent(ControlEvent theEvent) {
 //  if(theEvent.isFrom(r)) {
