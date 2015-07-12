@@ -234,10 +234,14 @@ void keyPressed() {
           //reihenfolge.append(wert1);
           //reihenfolge.append(wert2);
         }
+      //
+      //Die Liste Reihenfolge, in der alle Tupelpaare stehen, (also die Textpaare)
+      // wird hier zufällig durchgemischt, damit die Reihenfolge, in der die Annotierenden
+      // die Textpaare sehen werden, rein zufällig ist.
+      Collections.shuffle(reihenfolge);
       }
       for(int i=0;i<reihenfolge.size();i++){
-       println("i."+reihenfolge.get(i).get0());
-       println("i."+reihenfolge.get(i).get1());
+       println("Tupelpaar "+i+": "+reihenfolge.get(i).get0()+","+reihenfolge.get(i).get1());
       }
    // textnamen werden festgelegt
      for(int i = start_text; i<= end_text; i++){
