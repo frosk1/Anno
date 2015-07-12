@@ -41,6 +41,7 @@ StringList anno = new StringList();
 IntList reihenfolge_alt = new IntList();
 
 // neue Variablen
+
 StringDict korpus = new StringDict();
 File korpusdatei;
 File ergebnissdatei;
@@ -91,7 +92,7 @@ void draw() {
   if (status == "Annotation"){
     cp5.hide();
     background(255);
-   
+    text("Textpaar : "+(count+1),600,500);
     text("TextA",230,150);
     text(korpus.get(str(reihenfolge.get(t1).get0())),60,200);
     text("TextB",950,150);
