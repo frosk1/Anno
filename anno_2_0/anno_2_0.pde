@@ -41,7 +41,11 @@ StringList anno = new StringList();
 IntList reihenfolge_alt = new IntList();
 
 // neue Variablen
-
+int day = day();
+int month = month(); 
+int year = year(); 
+String strday = String.valueOf(day);
+String strmonth = String.valueOf(month);
 StringDict korpus = new StringDict();
 File korpusdatei;
 File ergebnissdatei;
@@ -69,11 +73,13 @@ int a2_0 = 0;
 float pa;
 float pe;
 float kappa;
+
+
 void setup() {
   size(1300,800);
   PFont font = createFont("arial",20);
   cp5 = new ControlP5(this);
-  output = createWriter("Ergebnisse.txt");
+  
     background(0);
     rect(400,20,500,20);
     rect(400,200,500,20);
@@ -304,6 +310,13 @@ void keyPressed() {
     }
   }
   if ((key == 'f') && (status == "speichern")){
+    if(day<10){
+      strday = "0"+strday;
+    }
+    if(month<10){
+      strmonth = "0"+strmonth;
+    }
+    output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_"+start_text+"_"+end_text+".txt");
     output.println("Annotations-Ergebnisse");
     output.println(" ");
     for(int i =start_text;i<=end_text;i++){
