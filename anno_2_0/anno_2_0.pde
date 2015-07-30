@@ -41,6 +41,8 @@ StringList anno = new StringList();
 IntList reihenfolge_alt = new IntList();
 
 // neue Variablen
+ArrayList<Ergpaar> ergebnisse1 = new ArrayList<Ergpaar>();
+ArrayList<Ergpaar> ergebnisse2 = new ArrayList<Ergpaar>();
 int day = day();
 int month = month(); 
 int year = year(); 
@@ -327,11 +329,19 @@ void keyPressed() {
     output.println(" ");
     int annotation = 0;
     for(int i=0;i<anno.size();i= i+2){
-      
+      Matcher matcher = Pattern.compile("Text (\\d+)").matcher(anno.get(i));
+      Matcher matcher1 = Pattern.compile("Text (\\d+)").matcher(anno.get(i+1));
+      if(matcher.find()&& matcher1.find()){
+        //println("#########");
+        //println("text1: "+matcher.group(1)+" text2: "+matcher1.group(1)+ "   "+annoergebniss.get(annotation));
+        Ergpaar paar = new Ergpaar(int(matcher.group(1)),int(matcher1.group(1)),annoergebniss.get(annotation));
+        ergebnisse1.add(paar);
+      }
       output.print(anno.get(i)+", "+anno.get(i+1)+"\t"+"\t"+annoergebniss.get(annotation));
       output.println(" ");
       annotation = annotation +1;
   }
+    //println("#########opopo"+ergebnisse1);
     println(anno.size());
     println(annoergebniss);
     output.close();
@@ -371,9 +381,19 @@ void keyPressed() {
         println(annoergebniss);
         println(annoergebnisse2);
         for(int i =0;i<annoergebniss.size();i++){
-          if(annoergebniss.get(i)==annoergebnisse2.get(i)){
-            gemeinsamrelevant = gemeinsamrelevant +1;
+          int t1 = ergebnisse1.get(i).gett1();
+          int t2 = ergebnisse1.get(i).gett2();
+          int erg = ergebnisse1.get(i).geterg();
+          for(Ergpaar k:ergebnisse2){
+            if(t1 == k.gett1() && t2 == k.gett2() && erg == k.geterg()){
+              gemeinsamrelevant = gemeinsamrelevant+1;
+              println(gemeinsamrelevant);
+            }
           }
+        
+          //if(annoergebniss.get(i)==annoergebnisse2.get(i)){
+            //gemeinsamrelevant = gemeinsamrelevant +1;
+         
           if(annoergebniss.get(i)== 1){
             a1_1 = a1_1 +1;
           }
@@ -419,10 +439,14 @@ void fileSelected2(File selection) {
     String[] myErgebnissText = loadStrings (ergebnissdatei);
     for (int u=0; u < myErgebnissText.length; u++) {
       println("myergebnisse"+myErgebnissText[u]);
-      Matcher matcher = Pattern.compile("Text \\d+, Text \\d+\\t\\t(\\d)").matcher(myErgebnissText[u]);
+      Matcher matcher = Pattern.compile("Text (\\d+), Text (\\d+)\\t\\t(\\d)").matcher(myErgebnissText[u]);
       if(matcher.find()){
-      println("matcher group ### "+matcher.group(1));
-      annoergebnisse2.append(int(matcher.group(1)));
+      println("text: "+matcher.group(1));
+      println("text2: "+matcher.group(2));
+      println("ergebniss "+matcher.group(3));
+      Ergpaar paar = new Ergpaar(int(matcher.group(1)),int(matcher.group(2)),int(matcher.group(3)));
+      ergebnisse2.add(paar);
+      annoergebnisse2.append(int(matcher.group(3)));
       }
       Matcher matcher2 = Pattern.compile("Text (\\d+): \\d+").matcher(myErgebnissText[u]);
       if(matcher2.find()){
@@ -526,6 +550,37 @@ class Tuple{
   }
   public int get1(){
     return this.Y;
+  }
+}
+class Ergpaar{
+  int t1 = 0;
+  int t2 = 0;
+  int erg = 0;
+  
+  public Ergpaar(int t1, int t2, int erg){
+    this.t1 = t1;
+    this.t2 = t2;
+    this.erg = erg;
+  }
+  public Ergpaar(){
+  }
+  public void sett1(int t1){
+    this.t1 = t1;
+  }
+  public void sett2(int t2){
+    this.t2 = t2;
+  }
+  public void seterg(int erg){
+    this.erg = erg;
+  }
+  public int gett1(){
+    return this.t1;
+  }
+  public int gett2(){
+    return this.t2;
+  }
+  public int geterg(){
+    return this.erg;
   }
 }
 //void controlEvent(ControlEvent theEvent) {
