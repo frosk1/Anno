@@ -39,6 +39,7 @@ StringList texte2 = new StringList();
 StringList textnamen = new StringList();
 StringList anno = new StringList();
 IntList reihenfolge_alt = new IntList();
+int anzahlpaare_end;
 
 // neue Variablen
 ArrayList<Ergpaar> ergebnisse1 = new ArrayList<Ergpaar>();
@@ -100,7 +101,7 @@ void draw() {
   if (status == "Annotation"){
     cp5.hide();
     background(255);
-    text("Textpaar : "+(count+1),600,500);
+    text("Textpaar : "+(count+1)+"/"+anzahlpaare_end,600,500);
     text("TextA",230,150);
     text(korpus.get(str(reihenfolge.get(t1).get0())),60,200);
     text("TextB",950,150);
@@ -176,7 +177,7 @@ void keyPressed() {
   line(700,650,1280,650);
   line(60,300,500,300); 
   text("Auswahl des Textbereichs",200,335);
-  text("Anzahl der Texte im Korpus: "+(korpus.size()-1),60,380); 
+  text("Anzahl der Texte im Korpus: "+(korpus.size()),60,380); 
   text("Bitte geben Sie den Bereich der Texte für die Annotation an"
    +"\n"+"und bestätigen Sie mit ENTER."
    +"\n"+"Beispiel: 1-10 oder 3-5",60,420);
@@ -318,7 +319,7 @@ void keyPressed() {
     if(month<10){
       strmonth = "0"+strmonth;
     }
-    output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_"+start_text+"_"+end_text+".txt");
+    output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_Jan_"+start_text+"_"+end_text+".txt");
     output.println("Annotations-Ergebnisse");
     output.println(" ");
     for(int i =start_text;i<=end_text;i++){
@@ -477,6 +478,7 @@ void fileSelected(File selection) {
    String regex2 = "\\t\\t";
    String text = "";
    String[] myText = loadStrings (korpusdatei);
+   //println("len"+myText.length);
     for (int u=0; u < myText.length; u++) {
       String [] splitresult = myText[u].split(regex2);
       int textid = int(splitresult[0]);
@@ -487,6 +489,7 @@ void fileSelected(File selection) {
           text += "\n";
         }
       }
+      
       korpus.set(str(textid),text);
       text = "";
   //  println(korpus);
@@ -494,7 +497,7 @@ void fileSelected(File selection) {
     }
     //println(korpus.get("0"));
     //println(korpus.get("1"));
-    //println(korpus.size());
+    //println("#####sizes"+korpus.size());
     text("Korpusdatei erfolgreich eingelesen",550,600);
     text("drücken Sie 'SPACE' um zur Anleitung zu gelangen",500,620);
     //println(korpus.get("0"));
@@ -527,6 +530,7 @@ public void input(String theText) {
     anzahlpaare = anzahlpaare +1;
     anzahlpaare2 = anzahlpaare2+anzahlpaare;
   }
+  anzahlpaare_end = anzahlpaare2;
   text("Anzahl der Textpaare: "+anzahlpaare2,65,640);
 }
 class Tuple{ 
