@@ -343,8 +343,8 @@ void keyPressed() {
       annotation = annotation +1;
   }
     //println("#########opopo"+ergebnisse1);
-    println(anno.size());
-    println(annoergebniss);
+    //println(anno.size());
+    //println(annoergebniss);
     output.close();
     status = "EndeAnno";
   
