@@ -77,11 +77,16 @@ float pa;
 float pe;
 float kappa;
 
+// Modi-variablen
+String modus = "";
+int anzahlshuffletexte;
+IntList textliste = new IntList();
 
 void setup() {
   size(1300,800);
   PFont font = createFont("arial",20);
   cp5 = new ControlP5(this);
+  
   
     background(0);
     rect(400,20,500,20);
@@ -97,18 +102,24 @@ void setup() {
 }
  
 void draw() {
-
+  
   if (status == "Annotation"){
     cp5.hide();
     background(255);
-    text("Textpaar : "+(count+1)+"/"+anzahlpaare_end,600,500);
-    text("TextA",230,150);
-    text(korpus.get(str(reihenfolge.get(t1).get0())),60,200);
-    text("TextB",950,150);
-    text(korpus.get(str(reihenfolge.get(t1).get1())),770,200);
-    text("Drücken sie 'a' für TextA oder 'b' für TextB",500,70);
-    status = "gedrückt";
+    if(modus == "regular"){
+      text("Textpaar : "+(count+1)+"/"+anzahlpaare_end,600,500);
+      } 
+    if(modus == "shuffle"){
+      text("Textpaar : "+(count+1)+"/"+anzahlshuffletexte,600,500);
+    }
+      text("TextA",230,150);
+      text(korpus.get(str(reihenfolge.get(t1).get0())),60,200);
+      text("TextB",950,150);
+      text(korpus.get(str(reihenfolge.get(t1).get1())),770,200);
+      text("Drücken sie 'a' für TextA oder 'b' für TextB",500,70);
+      status = "gedrückt";
   } 
+
   if (status == "Ende"){
     background(0);
     //println(rating);
@@ -182,30 +193,41 @@ void keyPressed() {
    +"\n"+"und bestätigen Sie mit ENTER."
    +"\n"+"Beispiel: 1-10 oder 3-5",60,420);
  
-      cp5.addTextfield("input")
+     cp5.addTextfield("input")
      .setPosition(60,470)
      .setSize(200,40)
      .setFocus(true)
-     .setColor(color(255,0,0))
-     ;
-//       r = cp5.addRadioButton("radioButton")
-//         .setPosition(700,500)
-//         .setSize(40,20)
-//         .setColorForeground(color(120))
-//         .setColorActive(color(100))
-//         .setColorLabel(color(100))
-//         .setItemsPerRow(2)
-//         .setSpacingColumn(50)
-//         .addItem("regulaer",1)
-//         .addItem("bestimmte Anzahl",2)
-//         ;
+     .setColor(color(255,0,0));
+      
+     cp5.addTextfield("input2")
+     .setPosition(60,520)
+     .setSize(200,40)
+     .setFocus(true)
+     .setColor(color(255,0,0));
+     
+     r = cp5.addRadioButton("radioButton")
+       .setPosition(300,470)
+       .setSize(40,20)
+       .setItemHeight(40)
+       .setSpacingRow(10) 
+       .setColorForeground(color(120))
+       .setColorActive(color(100))
+       .setColorLabel(color(100))
+       .setItemsPerRow(1)
+       .addItem("regular",1)
+       .addItem("shuffle",2)
+       .addItem("shuffle mit Liste",3);
+       
+
+       
+         
 //    switch(key) {
 //    case('0'): r.deactivateAll(); break;
 //    case('1'): r.activate(0); break;
 //    case('2'): r.activate(1); break;
 //    }
    status = "anleitungfertig";
-  text("Drücken Sie 'l' zum Starten der Annotation",60,700); 
+  
   }
   
   
@@ -228,44 +250,109 @@ void keyPressed() {
     t1=0;
     t2=1;
     count = 0;
-    if(start_text == 0 && end_text ==0){
-      text("Bitte geben Sie zuerst einen korrekten Bereich im Zahlenfeld an"+
-      "\n"+"bevor Sie die Annotation starten",200,570);
-     
-    }
-    else{
-      for(int i = start_text; i< end_text;i++){
-        wert1 = i;
-        for(int u = i+1; u<= end_text;u++){
-          //println(i);
-          wert2 = u;
-          Tuple tupeltexte = new Tuple(wert1,wert2);
-          reihenfolge.add(tupeltexte);
-          //reihenfolge.append(wert1);
-          //reihenfolge.append(wert2);
+    textliste.clear();
+    if(modus=="regular"){
+      if(start_text == 0 && end_text ==0){
+        text("Bitte geben Sie zuerst einen korrekten Bereich im Zahlenfeld an"+
+        "\n"+"bevor Sie die Annotation starten",200,570);
+       
+      }
+      else{
+        for(int i = start_text; i< end_text;i++){
+          wert1 = i;
+          for(int u = i+1; u<= end_text;u++){
+            //println(i);
+            wert2 = u;
+            Tuple tupeltexte = new Tuple(wert1,wert2);
+            reihenfolge.add(tupeltexte);
+            
+          }
+        //
+        //Die Liste Reihenfolge, in der alle Tupelpaare stehen, (also die Textpaare)
+        // wird hier zufällig durchgemischt, damit die Reihenfolge, in der die Annotierenden
+        // die Textpaare sehen werden, rein zufällig ist.
         }
-      //
-      //Die Liste Reihenfolge, in der alle Tupelpaare stehen, (also die Textpaare)
-      // wird hier zufällig durchgemischt, damit die Reihenfolge, in der die Annotierenden
-      // die Textpaare sehen werden, rein zufällig ist.
-      Collections.shuffle(reihenfolge);
+        Collections.shuffle(reihenfolge);
+        for(int i=0;i<reihenfolge.size();i++){
+         println("Tupelpaar "+i+": "+reihenfolge.get(i).get0()+","+reihenfolge.get(i).get1());
+        }
+     // textnamen werden festgelegt
+       for(int i = start_text; i<= end_text; i++){
+         texto.set(str(i),"Text "+str(i)); 
+       }
+       println(texto);
+    // rating dic wird initialisiert
+       for(int i = start_text; i<=end_text;i++){
+         rating.set(texto.get(str(i)),0);
+       }
+       println("rating"+rating);
+       println(korpus);
+       //println(korpus.get(str(reihenfolge.get(3))));
+        status = "Annotation";
       }
-      for(int i=0;i<reihenfolge.size();i++){
-       println("Tupelpaar "+i+": "+reihenfolge.get(i).get0()+","+reihenfolge.get(i).get1());
-      }
-   // textnamen werden festgelegt
-     for(int i = start_text; i<= end_text; i++){
-       texto.set(str(i),"Text "+str(i)); 
-     }
-     println(texto);
-  // rating dic wird initialisiert
-     for(int i = start_text; i<=end_text;i++){
-       rating.set(texto.get(str(i)),0);
-     }
-     println(rating);
-     println(korpus);
-     //println(korpus.get(str(reihenfolge.get(3))));
-      status = "Annotation";
+    }
+    if(modus=="shuffle"){
+      for(int i = 0; i< korpus.size();i++){
+          wert1 = i;
+          for(int u = i+1; u<= korpus.size();u++){
+            //println(i);
+            wert2 = u;
+            Tuple tupeltexte = new Tuple(wert1,wert2);
+            reihenfolge.add(tupeltexte);
+            
+          }
+        }
+         //
+        //Die Liste Reihenfolge, in der alle Tupelpaare stehen, (also die Textpaare)
+        // wird hier zufällig durchgemischt, damit die Reihenfolge, in der die Annotierenden
+        // die Textpaare sehen werden, rein zufällig ist.
+       Collections.shuffle(reihenfolge);
+
+     // textnamen werden festgelegt, sowie das Rating dic gefüllt, das passiert hier ein wenig anders als oben
+     // im regular modus, anschließend wird die Reihenfolgeliste neu gefüllt, damit sie bloß die Paare enthaellt,
+     // die auch annotiert werden sollen.
+       
+       println(anzahlshuffletexte);
+       
+       for(int i=0;i<anzahlshuffletexte;i++){
+         println("text: " +reihenfolge.get(i).get0()+"text: "+reihenfolge.get(i).get1());
+         if(!textliste.hasValue(reihenfolge.get(i).get0())){
+           textliste.append(reihenfolge.get(i).get0());
+         }
+         if(!textliste.hasValue(reihenfolge.get(i).get1())){
+           textliste.append(reihenfolge.get(i).get1());
+         }
+       }
+       println(textliste);
+       
+       for(int i = 0; i< textliste.size(); i++){
+         texto.set(str(textliste.get(i)),"Text "+str(textliste.get(i)));
+         rating.set("Text "+str(textliste.get(i)),0);
+       }
+       
+       //reihenfolge wird geleert und neu eingelesen mti den TUpelpaaren, die annotiert werden sollen
+       reihenfolge.clear();
+       for(int i = 0; i< (textliste.size()-1);i = i+2){
+         Tuple tupeltexte = new Tuple(textliste.get(i),textliste.get(i+1));
+         reihenfolge.add(tupeltexte);
+       }
+       
+       // Print Befehl der neuen Reihenfolge liste
+       for(int i=0;i<reihenfolge.size();i++){
+         println("Tupelpaar "+i+": "+reihenfolge.get(i).get0()+","+reihenfolge.get(i).get1());
+        }
+       println("texto: "+texto);
+       
+    // rating dic wird initialisiert
+//       for(int i = 0; i<= textliste.size();i++){
+//         rating.set(texto.get(str(i)),0);
+//       }
+       println("rating: "+rating);
+       //println(korpus);
+       //println(korpus.get(str(reihenfolge.get(3))));
+        status = "Annotation";
+      
+      
     }
   }
   
@@ -319,12 +406,24 @@ void keyPressed() {
     if(month<10){
       strmonth = "0"+strmonth;
     }
+    if(modus == "regular"){
     output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_Jan_"+start_text+"_"+end_text+".txt");
     output.println("Annotations-Ergebnisse");
     output.println(" ");
-    for(int i =start_text;i<=end_text;i++){
-      output.println("Text "+i+": "+rating.get(texto.get(str(i))));
+      for(int i =start_text;i<=end_text;i++){
+        output.println("Text "+i+": "+rating.get(texto.get(str(i))));
+      }  
     }
+    println("new rating"+rating);
+    if(modus == "shuffle"){
+      output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_Jan.txt");
+      output.println("Annotations-Ergebnisse");
+      output.println(" ");
+      for(String i : rating.keys()){
+        output.println(i+": "+rating.get(i));
+      }
+    }
+    
     output.println(" ");
     output.println("Textpaare");
     output.println(" ");
@@ -505,6 +604,7 @@ void fileSelected(File selection) {
 }
  // automatically receives results from controller input
 public void input(String theText) {
+  if(modus=="regular"){
   // Mit regulärem ausdruck die beiden Zahlen filtern aus dem Eingabefeld
   StringList inputs = new StringList();
   Matcher matcher = Pattern.compile("\\d+").matcher(theText);
@@ -516,9 +616,9 @@ public void input(String theText) {
   //println("start: "+ start_text);
   //println("end: "+ end_text);
   fill(255);
-  rect(60,590,280,70);
+  rect(60,620,240,50);
   fill(0);
-  text("Sie Annotieren die Texte: "+start_text+" - "+end_text,65,610);
+  text("Sie Annotieren die Texte: "+start_text+" - "+end_text,65,660);
   int anzahltextanno = 0;
   for(int i = start_text; i <= end_text;i++){
     anzahltextanno = anzahltextanno + 1;
@@ -532,6 +632,47 @@ public void input(String theText) {
   }
   anzahlpaare_end = anzahlpaare2;
   text("Anzahl der Textpaare: "+anzahlpaare2,65,640);
+  }
+}
+public void input2(String theText) {
+  fill(255);
+  rect(60,620,240,50);
+  fill(0);
+  text("Anzahl Textpaare: "+theText,65,660);
+  Matcher matcher = Pattern.compile("\\d+").matcher(theText);
+  while (matcher.find()) {
+    anzahlshuffletexte= int(matcher.group());
+  }
+}
+void controlEvent(ControlEvent theEvent) {
+  if(theEvent.isFrom(r)&& theEvent.getValue()==1.0) {
+    
+    fill(255);
+    rect(60,680,310,50);
+    fill(0);
+    modus = "regular";
+    println(modus);
+    text("Drücken Sie 'l' zum Starten der Annotation",62,700); 
+  }
+  if(theEvent.isFrom(r)&& theEvent.getValue()==2.0) {
+    
+    fill(255);
+    rect(60,680,310,50);
+    fill(0);
+    modus = "shuffle";
+    println(modus);
+    text("Drücken Sie 'l' zum Starten der Annotation",62,700); 
+  }
+  if(theEvent.isFrom(r)&& theEvent.getValue()==3.0) {
+    modus = "shuffle_liste";
+    println(modus);
+    fill(255);
+    rect(60,680,310,50);
+    fill(0);
+    text("Drücken Sie 'o' um eine Annotationsliste einzulesen",62,700); 
+    text("Danach drücken Sie 'l' zum Starten der Annotation",62,720); 
+  }
+
 }
 class Tuple{ 
   public  int X; 
