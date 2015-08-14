@@ -81,6 +81,8 @@ float kappa;
 String modus = "";
 int anzahlshuffletexte;
 IntList textliste = new IntList();
+ArrayList<Tuple> newreihe;
+PrintWriter listendatei;
 
 void setup() {
   size(1300,800);
@@ -331,7 +333,13 @@ void keyPressed() {
        }
        
        //reihenfolge wird geleert und neu eingelesen mti den TUpelpaaren, die annotiert werden sollen
+       // zu erst wird eine exakte Kopie der Liste angestellt, bakcup für Listendatei
+       newreihe = new ArrayList<Tuple>(reihenfolge);
+       println("reihenfolge size old"+reihenfolge.size());
        reihenfolge.clear();
+       println("newreihe size"+newreihe.size());
+       println("reihenfolge size"+reihenfolge.size());
+       
        for(int i = 0; i< (textliste.size()-1);i = i+2){
          Tuple tupeltexte = new Tuple(textliste.get(i),textliste.get(i+1));
          reihenfolge.add(tupeltexte);
@@ -407,15 +415,33 @@ void keyPressed() {
       strmonth = "0"+strmonth;
     }
     if(modus == "regular"){
-    output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_Jan_"+start_text+"_"+end_text+".txt");
-    output.println("Annotations-Ergebnisse");
-    output.println(" ");
+      output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_Jan_"+start_text+"_"+end_text+".txt");
+      output.println("Annotations-Ergebnisse");
+      output.println(" ");
       for(int i =start_text;i<=end_text;i++){
         output.println("Text "+i+": "+rating.get(texto.get(str(i))));
       }  
     }
     println("new rating"+rating);
     if(modus == "shuffle"){
+      //Listendatei schreiben : alle Tupelpaare die noch nciht annotiert wurden
+      listendatei = createWriter(strday+strmonth+String.valueOf(year)+"_Listendatei.txt");
+      for(Tuple i : reihenfolge){
+        for(int u= 0; u< newreihe.size();u++){
+          if(i.get0()==newreihe.get(u).get0()&&i.get1()==newreihe.get(u).get1()){
+            newreihe.remove(u);
+          }
+        }
+      }
+      println(newreihe.size());
+      //println("last 0 "+newreihe.get(113044).get0()+"last 1 "+newreihe.get(113044).get1());
+      for(int i=0; i<newreihe.size();i++){
+        listendatei.println("(Text "+str(newreihe.get(i).get0())+" -- Text "+str(newreihe.get(i).get1())+")");
+        //println("(Text "+str(newreihe.get(i).get0())+" -- Text "+str(newreihe.get(i).get1())+")");
+      }
+      listendatei.flush();
+      listendatei.close();
+      
       output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation"+"_Jan.txt");
       output.println("Annotations-Ergebnisse");
       output.println(" ");
