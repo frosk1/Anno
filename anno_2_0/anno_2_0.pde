@@ -52,6 +52,7 @@ String strmonth = String.valueOf(month);
 StringDict korpus = new StringDict();
 File korpusdatei;
 File ergebnissdatei;
+File annolistendatei;
 int start_text = 0;
 int end_text = 0;
 ControlP5 cp5;
@@ -65,7 +66,6 @@ IntList annoergebniss = new IntList();
 IntList annoergebnisse2 = new IntList();
 IntList anno2texte = new IntList();
 Tuple tupeltext = new Tuple();
-
 
 //kappa variablen
 int gemeinsamrelevant = 0;
@@ -82,7 +82,9 @@ String modus = "";
 int anzahlshuffletexte;
 IntList textliste = new IntList();
 ArrayList<Tuple> newreihe;
+ArrayList<Tuple> newreihe2;
 PrintWriter listendatei;
+String status2 = "";
 
 void setup() {
   size(1300,800);
@@ -112,6 +114,9 @@ void draw() {
       text("Textpaar : "+(count+1)+"/"+anzahlpaare_end,600,500);
       } 
     if(modus == "shuffle"){
+      text("Textpaar : "+(count+1)+"/"+anzahlshuffletexte,600,500);
+    }
+    if(modus == "shuffle_liste"){
       text("Textpaar : "+(count+1)+"/"+anzahlshuffletexte,600,500);
     }
       text("TextA",230,150);
@@ -294,13 +299,14 @@ void keyPressed() {
       }
     }
     if(modus=="shuffle"){
+      newreihe = new ArrayList<Tuple>(reihenfolge);
       for(int i = 0; i< korpus.size();i++){
           wert1 = i;
           for(int u = i+1; u<= korpus.size();u++){
             //println(i);
             wert2 = u;
             Tuple tupeltexte = new Tuple(wert1,wert2);
-            reihenfolge.add(tupeltexte);
+            newreihe.add(tupeltexte);
             
           }
         }
@@ -317,6 +323,8 @@ void keyPressed() {
        println(anzahlshuffletexte);
        
        for(int i=0;i<anzahlshuffletexte;i++){
+         Tuple tupeltexte = new Tuple(newreihe.get(i).get0(),newreihe.get(i).get1());
+         reihenfolge.add(tupeltexte);
          println("text: " +reihenfolge.get(i).get0()+"text: "+reihenfolge.get(i).get1());
          if(!textliste.hasValue(reihenfolge.get(i).get0())){
            textliste.append(reihenfolge.get(i).get0());
@@ -334,16 +342,16 @@ void keyPressed() {
        
        //reihenfolge wird geleert und neu eingelesen mti den TUpelpaaren, die annotiert werden sollen
        // zu erst wird eine exakte Kopie der Liste angestellt, bakcup für Listendatei
-       newreihe = new ArrayList<Tuple>(reihenfolge);
-       println("reihenfolge size old"+reihenfolge.size());
-       reihenfolge.clear();
-       println("newreihe size"+newreihe.size());
-       println("reihenfolge size"+reihenfolge.size());
        
-       for(int i = 0; i< (textliste.size()-1);i = i+2){
-         Tuple tupeltexte = new Tuple(textliste.get(i),textliste.get(i+1));
-         reihenfolge.add(tupeltexte);
-       }
+       println("newreihe size old"+newreihe.size());
+       //reihenfolge.clear();
+       println("reihenfolge size "+reihenfolge.size());
+       
+       
+       //for(int i = 0; i< (textliste.size()-1);i = i+2){
+       //  Tuple tupeltexte = new Tuple(textliste.get(i),textliste.get(i+1));
+       //  reihenfolge.add(tupeltexte);
+       //}
        
        // Print Befehl der neuen Reihenfolge liste
        for(int i=0;i<reihenfolge.size();i++){
@@ -362,6 +370,67 @@ void keyPressed() {
       
       
     }
+  if((modus=="shuffle_liste")&&(status2 =="eingelesen")){
+      
+         //
+        //Die Liste Reihenfolge, in der alle Tupelpaare stehen, (also die Textpaare)
+        // wird hier zufällig durchgemischt, damit die Reihenfolge, in der die Annotierenden
+        // die Textpaare sehen werden, rein zufällig ist.
+       Collections.shuffle(newreihe2);
+      
+
+     // textnamen werden festgelegt, sowie das Rating dic gefüllt, das passiert hier ein wenig anders als oben
+     // im regular modus, anschließend wird die Reihenfolgeliste neu gefüllt, damit sie bloß die Paare enthaellt,
+     // die auch annotiert werden sollen.
+       
+       println(anzahlshuffletexte);
+       
+       for(int i=0;i<anzahlshuffletexte;i++){
+         Tuple tupeltexte = new Tuple(newreihe2.get(i).get0(),newreihe2.get(i).get1());
+         reihenfolge.add(tupeltexte);
+         println("text: " +newreihe2.get(i).get0()+"text: "+newreihe2.get(i).get1());
+         if(!textliste.hasValue(newreihe2.get(i).get0())){
+           textliste.append(newreihe2.get(i).get0());
+         }
+         if(!textliste.hasValue(newreihe2.get(i).get1())){
+           textliste.append(newreihe2.get(i).get1());
+         }
+       }
+       println(textliste);
+       
+       for(int i = 0; i< textliste.size(); i++){
+         texto.set(str(textliste.get(i)),"Text "+str(textliste.get(i)));
+         rating.set("Text "+str(textliste.get(i)),0);
+       }
+       
+       //reihenfolge wird geleert und neu eingelesen mti den TUpelpaaren, die annotiert werden sollen
+       // zu erst wird eine exakte Kopie der Liste angestellt, bakcup für Listendatei
+  
+       println("reihenfolge size old"+reihenfolge.size());
+       println("newreihe size"+newreihe2.size());
+       
+       //for(int i = 0; i< (textliste.size()-1);i = i+2){
+        // Tuple tupeltexte = new Tuple(textliste.get(i),textliste.get(i+1));
+         //reihenfolge.add(tupeltexte);
+       //}
+       
+       // Print Befehl der neuen Reihenfolge liste
+       for(int i=0;i<reihenfolge.size();i++){
+         println("Tupelpaar "+i+": "+reihenfolge.get(i).get0()+","+reihenfolge.get(i).get1());
+        }
+       println("texto: "+texto);
+       
+    // rating dic wird initialisiert
+//       for(int i = 0; i<= textliste.size();i++){
+//         rating.set(texto.get(str(i)),0);
+//       }
+       println("rating: "+rating);
+       //println(korpus);
+       //println(korpus.get(str(reihenfolge.get(3))));
+        status = "Annotation";
+      
+      
+    }  
   }
   
 
@@ -449,6 +518,32 @@ void keyPressed() {
         output.println(i+": "+rating.get(i));
       }
     }
+    if(modus == "shuffle_liste"){
+      //Listendatei schreiben : alle Tupelpaare die noch nciht annotiert wurden
+      listendatei = createWriter(strday+strmonth+String.valueOf(year)+"_Listendatei_x.txt");
+      for(Tuple i : reihenfolge){
+        for(int u= 0; u< newreihe2.size();u++){
+          if(i.get0()==newreihe2.get(u).get0()&&i.get1()==newreihe2.get(u).get1()){
+            newreihe2.remove(u);
+          }
+        }
+      }
+      println(newreihe2.size());
+      //println("last 0 "+newreihe.get(113044).get0()+"last 1 "+newreihe.get(113044).get1());
+      for(int i=0; i<newreihe2.size();i++){
+        listendatei.println("(Text "+str(newreihe2.get(i).get0())+" -- Text "+str(newreihe2.get(i).get1())+")");
+        //println("(Text "+str(newreihe.get(i).get0())+" -- Text "+str(newreihe.get(i).get1())+")");
+      }
+      listendatei.flush();
+      listendatei.close();
+      
+      output = createWriter(strday+strmonth+String.valueOf(year)+"_"+"Annotation_x"+"_Jan.txt");
+      output.println("Annotations-Ergebnisse");
+      output.println(" ");
+      for(String i : rating.keys()){
+        output.println(i+": "+rating.get(i));
+      }
+    }
     
     output.println(" ");
     output.println("Textpaare");
@@ -476,7 +571,10 @@ void keyPressed() {
   }
     if ((key == 'e') && (status == "EndeAnno")){
     exit();
-    
+    }
+   if((key == 'o')&& (status == "anleitungfertig") && (modus == "shuffle_liste")){
+       selectInput("Annoliste auswählen :","fileSelected3");
+       status2 = "eingelesen";
   }
   if ((key == 'o') && (status == "EndeAnno")){
     selectInput("Ergebnissdatei auswählen :", "fileSelected2");
@@ -553,11 +651,37 @@ void keyPressed() {
         }
       }
     }  
+
+}
+
+void fileSelected3(File selection) {
+  if (selection == null) {
+    text("Sie haben keine annoliste ausgewählt, bitte wählen sie eine annolisten.txt-Datei aus",800,800);
+    selectInput("Annolistendatei auswählen :", "fileSelected3");
+  } else {
+    newreihe2 = new ArrayList<Tuple>();
+    dir = selection.getAbsolutePath();
+    annolistendatei = new File(dir);
+    String[] myErgebnissText = loadStrings (annolistendatei);
+    for (int u=0; u < myErgebnissText.length; u++) {
+      //println("myergebnisse"+myErgebnissText[u]);
+      Matcher matcher = Pattern.compile("\\(Text (\\d+) -- Text (\\d+)\\)").matcher(myErgebnissText[u]);
+      if(matcher.find()){
+        //println("text: "+matcher.group(1));
+        //println("text2: "+matcher.group(2));
+      
+        Tuple tupeltexte = new Tuple(int(matcher.group(1)),int(matcher.group(2)));
+        newreihe2.add(tupeltexte);      
+      
+     }
+  }
+  println("size. newreihe####"+newreihe2.size());
+  }
 }
 void fileSelected2(File selection) {
   if (selection == null) {
     text("Sie haben keine Ergebnissdatei ausgewählt, bitte wählen sie eine Ergebniss.txt-Datei aus",800,800);
-    selectInput("Korpusdatei auswählen :", "fileSelected");
+    selectInput("Korpusdatei auswählen :", "fileSelected2");
   } else {
     
     dir = selection.getAbsolutePath();
