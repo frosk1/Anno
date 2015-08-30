@@ -300,9 +300,9 @@ void keyPressed() {
     }
     if(modus=="shuffle"){
       newreihe = new ArrayList<Tuple>(reihenfolge);
-      for(int i = 0; i< korpus.size();i++){
+      for(int i = 0; i< (korpus.size()-1);i++){
           wert1 = i;
-          for(int u = i+1; u<= korpus.size();u++){
+          for(int u = i+1; u<= (korpus.size()-1);u++){
             //println(i);
             wert2 = u;
             Tuple tupeltexte = new Tuple(wert1,wert2);
